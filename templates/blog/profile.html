@@ -1,0 +1,193 @@
+{% extends 'blog/base.html' %}
+
+{% block title %} UBlog - {{user.first_name}} {{user.last_name}} {% endblock %}
+
+{% block meta %}
+<meta name="description" content="UBlog use profild">
+  <meta name="keywords" content="UBlog , user, blog">
+  <meta name="blog" content="UBlog">
+{% endblock %}
+
+{% block script %}
+<script type="text/javascript">
+	prevs = document.getElementsByClassName("prev") ;
+	Array.from(prevs).forEach((e) => {
+		e.innerHTML = e.innerText;
+	} )
+</script>
+{% endblock %}
+
+{% block body %}
+{% load humanize %} 
+{% if user.is_authenticated %}
+
+<div class="container my-3" >
+
+<img alt="?" style="height:50px ;border-radius:50%;display: block;margin-left: auto;margin-right: auto;width: 50px;" src="https://image.flaticon.com/icons/png/512/64/64572.png" >
+
+<div style="text-align:center;"><b style="text-align:center;" class="my-2" >{{ user.first_name }} {{ user.last_name }}</b><small> @{{ user.username }}</small></div>
+<hr>
+<ul>
+	<li>
+		<span>Start a new Blog </span><a class="btn btn-primary mx-3" style="text-decoration:none;border-radius:50%;" href="/blog/startblog" >  +  </a>
+	</li>
+	<br>
+	
+	<li>
+		<span>Publish a new Article</span><a class="btn btn-primary mx-2" style="text-decoration:none;border-radius:50%;" href="/blog/publisharticle" >  +  </a>
+	</li>
+	<br>
+</ul>
+<hr>
+<div class="text-center" > <h4> Your Activities </h4> </div>
+	
+	<ul class="nav nav-pills mb-3 text-center" id="pills-tab" role="tablist">
+	<li class="nav-item" role="presentation">
+	<button class="nav-link active" id="pills-home-tab" data-bs-toggle="pill" data-bs-target="#pills-home" type="button" role="tab" aria-controls="pills-home" aria-selected="true"> Blogs </button>
+	</li>
+	<li class="nav-item" role="presentation">
+	<button class="nav-link" id="pills-profile-tab" data-bs-toggle="pill" data-bs-target="#pills-profile" type="button" role="tab" aria-controls="pills-profile" aria-selected="false"> Articles </button>
+
+	</ul>
+	<div class="tab-content" id="pills-tabContent">
+	
+	<div class="tab-pane fade show active" id="pills-home" role="tabpanel" aria-labelledby="pills-home-tab">
+		{% for post in posts|slice:"16" %}
+		<div class="card">
+		<div class="card-header">
+		{{post.title|slice:"128"}} | <b><small>{{post.timestamp|naturaltime}}</small></b> 
+		</div>
+		<div class="card-body">
+		<h5 class="card-title">{{post.subtitle|slice:"255"}} </h5>
+		<p class="card-text" id="cardText{{forloop.counter}}"> <div clas="prev" >{{post.body|safe|slice:"512"}} </div></p>
+		<a href="blogpost/{{post.id}}" class="btn btn-primary">Read More </a> 
+	
+			<!-- delete -->
+			{% if user.is_authenticated and user.username == post.author.username %}
+			
+			
+			<!-- Button trigger modal -->
+			<button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#exampleModal{{post.id}}">
+			Delete Blog
+			</button>
+			
+			<!-- Modal -->
+			<div class="modal fade" id="exampleModal{{post.id}}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+			<div class="modal-dialog">
+			<div class="modal-content">
+			<div class="modal-header">
+			<h5 class="modal-title" id="exampleModalLabel">Delete Blog</h5>
+			<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+			</div>
+			<div class="modal-body">
+			Are you sure want to delete this Blog? 
+			</div>
+			<div class="modal-footer">
+			<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+			
+			<form method="post" action="/blog/delblogp" > {% csrf_token %} 
+			<input type="hidden" name="blogid" value="{{post.id}}">
+			<button class="btn btn-danger" type="submit">Delete Blog</button>
+			</form>
+			
+			</div>
+			</div>
+			</div>
+			</div>
+			
+			{% endif %}
+			
+			<!-- end delete -->
+			
+			<!-- Edit -->
+			<form method="post" action="/blog/editblog"> {% csrf_token %} 
+			<input name="blogid" type="hidden" value="{{post.id}}">
+			<button type="submit" class="btn btn-success" >Edit</button>
+			</form>
+			<!-- End Edit-->
+		</div>
+		</div>
+		<br>
+		{% endfor %}
+		<!-- posts -->
+	</div>
+	
+	<div class="tab-pane fade" id="pills-profile" role="tabpanel" aria-labelledby="pills-profile-tab">
+		{% for article in articles|slice:"16" %} 
+		<div class="card text-center">
+		<div class="card-header">
+		{{article.heading|slice:"128"}}
+		</div>
+		
+		<div class="card-body">
+		<h5 class="card-title"> {{article.subheading|slice:"255"}} </h5>
+		<p class="card-text">{{article.content|slice:"512"}}</p>
+		<a href="/blog/article/{{article.id}}" class="btn btn-primary">Read more</a>
+		
+			<!-- del -->
+			{% if user.is_authenticated and user.username == article.author.username %}
+			
+			
+			<!-- Button trigger modal -->
+			<button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#exampleModal{{article.id}}">
+			Delete Article
+			</button>
+			
+			<!-- Modal -->
+			<div class="modal fade" id="exampleModal{{article.id}}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+			<div class="modal-dialog">
+			<div class="modal-content">
+			<div class="modal-header">
+			<h5 class="modal-title" id="exampleModalLabel">Delete Article</h5>
+			<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+			</div>
+			<div class="modal-body">
+			Are you sure want to delete this Article? 
+			</div>
+			<div class="modal-footer">
+			<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+			
+			<form method="post" action="/blog/delartp" > {% csrf_token %} 
+			<input type="hidden" name="articleid" value="{{article.id}}">
+			<button class="btn btn-danger" type="submit">Delete Article</button>
+			</form>
+			
+			</div>
+			</div>
+			</div>
+			</div>
+			
+			{% endif %}
+			
+			<!-- end delete -->
+			
+			<!-- Edit -->
+				<form method="post" action="/blog/editarticle"> {% csrf_token %} 
+				<input name="articleid" type="hidden" value="{{article.id}}">
+				<button type="submit" class="btn btn-success" >Edit</button>
+				</form>
+			<!-- End Edit-->
+		</div>
+		<div class="card-footer text-muted">
+		{{article.timestamp|naturaltime}} 
+		</div>
+		</div>
+		<br>
+		{% endfor %}
+		
+	</div>
+	</div>
+	
+
+	
+</div>
+{% else %}
+<div class="container" >
+<h3>looks like you're lost! </h3>
+</div>
+{% endif %}
+{% endblock %}
+
+
+
+ 

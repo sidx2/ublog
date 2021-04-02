@@ -1,0 +1,49 @@
+{% extends 'blog/base.html' %}
+
+{% block title %}
+The UBlog - Recent Blogs 
+{% endblock %} 
+
+{% block meta %}
+<meta name="description" content="latest blogs by The Ublog">
+  <meta name="keywords" content="latest, blogs, Ublog">
+  <meta name="blog" content="UBlog">
+{% endblock %} 
+{% block script %}
+<script type="text/javascript">
+	prevs = document.getElementsByClassName("prev") ;
+	Array.from(prevs).forEach((e) => {
+		e.innerHTML = e.innerText;
+	} )
+</script>
+{% endblock %} 
+{% block body %}
+{% load humanize %} 
+<div class="container" >
+
+<div class="alert alert-primary" role="alert">
+  
+
+<span><a style="color:dark-blue ;" class="btn primary" href="/blog/startblog" ><h3>Start a new blog</h3></a> </span>
+</div>
+<h6 class="my-3" style="text-align: center;" > 
+Recent Blogs
+<img alt="" style="height:20px;border-radius:7px;" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQhas9QUllwv5bXPDAhtBaLPMz3RY1ZyNJvdg&usqp=CAU" >
+ </h6>
+
+{% for blog in blogs|slice:"12" %} 
+<div class="card my-3">
+  <div class="card-header">
+    <b>{{blog.title|slice:"128"}}</b> | <small>{{blog.timestamp|naturaltime}} </small> | <b> {{blog.author.first_name}} {{blog.author.last_name}} </b>
+  </div>
+  <div class="card-body">
+    <h5 class="card-title">{{blog.subtitle|slice:"255"}} </h5>
+    <p class="card-text"> <div class="prev" > {{blog.body|safe|slice:"512"}} </div></p>
+    <a href="/blog/blogpost/{{blog.id}}" class="btn btn-primary" > Read More </a>
+  </div>
+</div>
+{% endfor %} 
+
+</div>
+{% endblock %}
+ 

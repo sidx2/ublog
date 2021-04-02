@@ -1,0 +1,58 @@
+{% extends 'blog/base.html' %}
+
+
+{% block title %}
+UBlog - Publish a new Article 
+{% endblock %}
+
+{% block meta %}
+<meta name="description" content="Publish a new Article - UBlog">
+  <meta name="keywords" content="UBlog , user, blog">
+  <meta name="author" content="UBlog">
+{% endblock %} 
+
+{% block body %}
+<div class="container" >
+	{% if user.is_authenticated %}
+	<form action="/blog/handlepublisharticle" method="post" > {% csrf_token %} 
+		
+		<div class="mb-3">
+		<label for="exampleFormControlInput1" class="form-label">Article Heading</label>
+		<input type="text" maxlength="512" name="heading" class="form-control" id="exampleFormControlInput1" placeholder="Title that best describes your topic of your Article" required>
+		</div>
+		<div class="mb-3">
+		<label for="exampleFormControlInput1" class="form-label">Subheading</label>
+		<input type="text" maxlength="1024" name="subheading" class="form-control" id="exampleFormControlInput1" placeholder="Subheading of your article">
+		</div>
+		
+		
+		<label>Article</label> <br>
+		<textarea class="form-control" maxlength="327670" style="width:100%;" name="content" id="blogbody" placeholder="Write your article here" required>
+		</textarea>
+		
+		<br>
+		<button type="submit" class="btn btn-primary">Publish</button>
+	</form>
+	{% else %} 
+		<div class="container" >
+		<div class="alert alert-info" role="alert">
+		<h4 class="alert-heading">Oops! Looks like you are not logged in. </h4>
+		<p>Anonymous users can not publish articles. <br> If you are new here. Take a few steps and get your UBolg account. </p>
+		<hr>
+		<p class="mb-0">
+		<a class="btn btn-primary" href="/blog/loginn" >Login</a> <b> or </b> <a class="btn btn-info" href="/blog/signup"> Signup </a> <b> to continue</b>
+		</p>
+		</div>
+		</div>
+		<style type="text/css">
+		body {
+		background-image: url('https://www.mivation.com/wp-content/uploads/2019/08/mivation-blog7.png') ;
+		background-size: cover ;
+		background-repeat: no-repeat ;
+		background-attachment: fixed;
+		} 
+		</style>
+	{% endif %}
+</div>
+{% endblock %}
+

@@ -1,0 +1,57 @@
+{% extends 'blog/base.html' %}
+
+{% block head %}
+ 
+{% endblock %}
+
+{% block title %} UBlog - Contact UBlog {% endblock %} 
+
+{% block meta %}
+<meta name="description" content="contact UBlog ">
+  <meta name="keywords" content="UBlog , contact, blog">
+  <meta name="author" content="UBlog">
+{% endblock %} 
+{% block body %}
+<div class="container" >
+	{% if user.is_authenticated %}
+	<form action="/blog/handlepostquestion" method="post" > {% csrf_token %} 
+		<div class="mb-3">
+		<label for="exampleFormControlInput1" class="form-label"> Topic </label>
+		<input type="text" maxlength="512" name="cat" class="form-control" id="exampleFormControlInput1" placeholder="Mention topic of your concern">
+		</div>
+		
+		
+		<label>Your concern</label><br>
+		<textarea maxlength="32767" name="question" style="width:100%" id="blogbody" placeholder="Write your question here" required>
+		</textarea> <br>
+		
+		
+		
+		<button type="submit" class="btn btn-primary"> Send </button>
+	</form>
+	{% else %} 
+		<div class="container" >
+		<div class="alert alert-info" role="alert">
+		<h4 class="alert-heading">Oops! Looks like you are not logged in. </h4>
+		<p>Anonymous users can not report issues. </p>
+		<hr>
+		<p class="mb-0">
+		<a class="btn btn-primary" href="/blog/loginn" >Login</a> <b> or </b> <a class="btn btn-info" href="/blog/signup"> Signup </a> <b> to continue</b>
+		</p>
+		</div>
+		</div>
+		<style type="text/css">
+		body {
+		background-image: url('https://www.mivation.com/wp-content/uploads/2019/08/mivation-blog7.png') ;
+		background-size: cover ;
+		background-repeat: no-repeat ;
+		background-attachment: fixed;
+		} 
+		</style>
+	{% endif %}
+</div>
+{% endblock %}
+
+{% block script %}
+
+{% endblock %} 

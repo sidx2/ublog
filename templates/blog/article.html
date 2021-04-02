@@ -1,0 +1,231 @@
+{% extends 'blog/base.html' %}
+
+{% block title %} {{article.heading}} - UBlog Article by {{article.author.first_name}} {{article.author.last_name}} {% endblock %} 
+
+{% block meta %}
+<meta name="description" content="{{article.subheading}}">
+  <meta name="keywords" content="{{article.author.first_name}} {{article.author.last_name}} , Article, Ublog">
+  <meta name="author" content="{{article.author.first_name}} {{article.author.last_name}}">
+{% endblock %} 
+{% block body %}
+{% load humanize %}
+<div class="container" >
+	<h3>{{article.heading}} </h3>
+	<b> Author : </b>  <b>{{article.author.first_name}} {{article.author.last_name}} </b> <small>{{article.timestamp|naturaltime}} </small><br>
+	
+	<!-- delete -->
+	{% if user.is_authenticated and user.username == article.author.username %}
+	
+	
+	<!-- Button trigger modal -->
+	<button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#exampleModal">
+	Delete Article
+	</button>
+	
+	<!-- Modal -->
+	<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+	<div class="modal-dialog">
+	<div class="modal-content">
+	<div class="modal-header">
+	<h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+	<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+	</div>
+	<div class="modal-body">
+	Are you sure want to delete this Article? 
+	</div>
+	<div class="modal-footer">
+	<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+	
+	<form method="post" action="/blog/delart" > {% csrf_token %} 
+	<input type="hidden" name="articleid" value="{{article.id}}">
+	<button class="btn btn-danger" type="submit">Delete Article</button>
+	</form>
+	
+	</div>
+	</div>
+	</div>
+	</div>
+	
+	<!-- Edit -->
+	<form method="post" action="/blog/editarticle"> {% csrf_token %} 
+	<input name="articleid" type="hidden" value="{{article.id}}">
+	<button type="submit" class="btn btn-success" >Edit</button>
+	</form>
+	<!-- End Edit-->
+	{% endif %}
+	
+	<!-- end delete -->
+	
+	<hr>
+	<h4>{{article.subheading}} </h4>
+	<p>{{article.content}} </p>
+	<hr>
+	
+	<!-- Comment Section -->
+	<span><img alt="?" style="height:30px;border-radius:7px;" src="https://seekicon.com/free-icon-download/comments_5.svg" >
+	<span style="font-size:23px;" >  Comments  <small>({{comments.count}})</small> </span></span> <br>
+	<!-- Commenter Filter -->
+	{% if user.is_authenticated %}
+	
+	
+	{% else %}
+	
+	
+	{% endif %}
+	<br>
+	
+	{% if user.is_authenticated %} 
+	<!-- Comments -->
+	<form method="post" action="/blog/handlearticlecomment" > {% csrf_token %} 
+		<input type="text" maxlength="255" name="comment" clsss="" style="width:80%;outline:none ;border:none;border-bottom:2px solid black" >
+		<input type="hidden" name="articleofcomment" value="{{article.id}}" >
+		<button class="btn" type="submit" style="background:none;border:none;outline:none;" >
+		<img alt="?" style="height:30px;border-radius:50%;" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcReOb0miOiJGbR9HylyGRASFTek-9YAPvWewg&usqp=CAU" >
+		</button>
+	</form>
+	{% else %}
+		<!-- Button trigger modal -->
+		You need to 
+		<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
+		Login
+		</button>
+		to post comments
+		<!-- Modal -->
+		<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+		<div class="modal-dialog">
+		<div class="modal-content">
+		<div class="modal-header">
+		<h5 class="modal-title" id="exampleModalLabel">Login to comment</h5>
+		<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+		</div>
+		<div class="modal-body">
+			<form class="my-3" method="post" action="/blog/aclogin" > {% csrf_token %} 
+				<div class="mb-3">
+					<label for="exampleInputEmail1" class="form-label">Username</label>
+					<input name="username" maxlength="255" type="text" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp">
+		
+				</div>
+				<div class="mb-3">
+					<label for="exampleInputPassword1" class="form-label">Password</label>
+					<input name="password" maxlength="255" type="password" class="form-control" id="exampleInputPassword1">
+				</div>
+		
+				<input type="hidden" name="articleid" value="{{article.id}}" >
+				<button type="submit" class="btn btn-primary">Login</button>
+			</form>
+		
+		
+		</div>
+		<div class="modal-footer">
+		<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+		
+		</div>
+		</div>
+		</div>
+		</div>
+		
+	{% endif %} 
+	<br><br>
+	
+	{% for comment in comments %}
+	<div class="list-group">
+		<div class="list-group-item list-group-item-action" aria-current="true">
+			<div class="d-flex w-100 justify-content-between">
+				<span class="mb-1"><img alt="" style="height:25px;border-radius:50%;" src="https://image.flaticon.com/icons/png/512/64/64572.png" > {{comment.commentor.first_name}} {{comment.commentor.last_name}} </span>
+				<small>{{comment.timestamp|naturaltime}}</small>
+			</div>
+			<p class="mb-1"><small>{{comment.comment|slice:"255"}}</small></p>
+			<p class="text-end">
+			<small>
+			
+			
+			<p class="text-end" >
+			
+			{% if user.is_authenticated %} 
+			<a class="btn" data-bs-toggle="collapse" href="#collapseExample{{forloop.counter}}" role="button" aria-expanded="false" aria-controls="collapseExample">
+				<img alt="?" style="height:20px;border-radius:50%;" src="https://static.thenounproject.com/png/70802-200.png">
+			</a>
+			{% endif %} 
+			<button class="btn" type="button" data-bs-toggle="collapse" data-bs-target="#collapseExample2{{forloop.counter}}" aria-expanded="false" aria-controls="collapseExample">
+				<img alt="?" style="height:20px;border-radius:7px;" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ7y8bMQTs8mTwa2MrfPi5GRhDOxi4QL8T_pA&usqp=CAU">
+				
+			</button>
+			<a href="#" class="btn"><img alt="?" style="height:20px;border-radius:50%;" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR5jfpeRPgi3wIre8XTmKsvOmZhHBKnvb4n3g&usqp=CAU"></a>
+			
+			<!-- delete -->
+			{% if user.is_authenticated and comment.commentor.username == user.username %}
+			
+			
+			<!-- Button trigger modal -->
+			<button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#exampleModal{{comment.id}}">
+			<img style="height:25px;border-radius:50%" src="https://cdn3.iconfinder.com/data/icons/social-messaging-ui-color-line/254000/82-512.png" >
+			</button>
+			
+			<!-- Modal -->
+			<div class="modal fade" id="exampleModal{{comment.id}}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+			<div class="modal-dialog">
+			<div class="modal-content">
+			<div class="modal-header">
+			<h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+			<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+			</div>
+			<div class="modal-body">
+			Are you sure want to delete this Comment? 
+			</div>
+			<div class="modal-footer">
+			<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+			
+			<form method="post" action="/blog/delcomart" > {% csrf_token %} 
+			<input type="hidden" name="comid" value="{{comment.id}}">
+			<input type="hidden" name="articleid" value="{{article.id}}">
+			<button class="btn btn-danger" type="submit">Delete Comment</button>
+			</form>
+			
+			</div>
+			</div>
+			</div>
+			</div>
+			
+			{% endif %} 
+			<!-- -->
+			
+			</p>
+			<div class="collapse" id="collapseExample{{forloop.counter}}">
+				<div class="card card-body">
+					<form method="post" action="/blog/handlearticlereply" > {% csrf_token %} 
+					<input type="text" maxlength="255" name="comment" clsss="" style="width:75%;outline:none ;border:none;border-bottom:1px solid black" >
+					<input type="hidden" name="articleofcomment" value="{{article.id}}" >
+					<input type="hidden" name="parentofreply" value="{{comment.id}}" >
+					<button class="btn" type="submit" style="background:none;border:none;outline:none;" >
+					<img alt="?" style="height:30px;border-radius:50%;" src="https://static.thenounproject.com/png/70802-200.png" >
+					</button>
+					</form>
+				</div>
+			</div>
+			
+			<div class="collapse" id="collapseExample2{{forloop.counter}}">
+				<div class="card card-body">
+					{% for reply in replies %}
+						{% if comment.id == reply.assparentcomment.id %}
+							<b>{{reply.commentor.first_name}} {{reply.commentor.last_name}}</b> <small>{{reply.timestamp|naturaltime}}</small>
+							<span>{{reply.comment|slice:"255"}}</span> <br>
+						{% endif %} 
+					{% endfor %} 
+				</div>
+			</div>
+			
+			
+			</small></p>
+			
+		</div>
+		
+		<br>
+		
+	</div>
+	
+	{% endfor %} 
+	
+	
+	
+</div>
+{% endblock %} 

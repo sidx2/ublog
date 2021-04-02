@@ -1,0 +1,53 @@
+{% extends 'blog/base.html' %}
+
+{% block title %} UBlog - Create a new accont {% endblock %} 
+{% block body %}
+
+{% block meta %}
+<meta name="description" content="create a New UBlog account">
+  <meta name="keywords" content="UBlog , signup, new account">
+  <meta name="blog" content="Ublog">
+{% endblock %} 
+<div class="container" >
+	<h3>
+	Sign up to UBlog
+	<img alt="?" style="height:30px;border-radius:7px;" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQhas9QUllwv5bXPDAhtBaLPMz3RY1ZyNJvdg&usqp=CAU" >
+	</h3>
+
+	<form class="my-3" method="post" action=""> {% csrf_token %} 
+	<div class="mb-3">
+	<label for="exampleInputEmail1" class="form-label">First name</label>
+	<input maxlength="48" name="fname" type="text" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" required>
+	
+	</div>
+	<div class="mb-3">
+	<label for="exampleInputPassword1" class="form-label">Last name</label>
+	<input maxlength="48" name="lname" type="text" class="form-control" id="exampleInputPassword1" required>
+	</div>
+	
+	
+	<div class="mb-3">
+	<label for="exampleInputEmail1" class="form-label">Email address</label>
+	<input maxlength="128" name="email" type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" required>
+	
+	</div>
+	<div class="mb-3">
+	<label for="exampleInputPassword1" class="form-label">Choose a username</label>
+	<input maxlength="16" name="username" type="text" class="form-control" id="leInputPassword1" required>
+	</div>
+	
+	
+	<div class="mb-3">
+	<label for="exampleInputEmail1" class="form-label">Password </label>
+	<input name="pass1" maxlength="48" type="password" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" required>
+	
+	</div>
+	<div class="mb-3">
+	<label for="exampleInputPassword1" class="form-label">Confirm password</label>
+	<input name="pass2" maxlength="48" type="password" class="form-control" id="exampleInputPassword1" required>
+	</div>
+	
+	<button type="submit" class="btn btn-primary">Sign up</button>
+	</form>
+</div>
+{% endblock %} 

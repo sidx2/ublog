@@ -1,0 +1,45 @@
+{% extends 'blog/base.html' %}
+
+{% block title %}
+The UBlog Articles latest
+{% endblock %} 
+
+{% block meta %}
+<meta name="description" content="latest articles by the Ublog">
+  <meta name="keywords" content="UBlog , Article, blog">
+  <meta name="author" content="UBlog">
+{% endblock %} 
+{% block script %}
+<script type="text/javascript">
+	prevs = document.getElementsByClassName("prev") ;
+	Array.from(prevs).forEach((e) => {
+		e.innerHTML = e.innerText;
+	} )
+</script>
+{% endblock %} 
+{% block body %}
+{% load humanize %} 
+<div class="container" >
+<div class="alert alert-info" role="alert">
+<span><a style="color:dark-blue ;" class="btn primary" href="/blog/publisharticle" ><h3>Publish a new Article</h3></a> </span>
+</div>
+
+{% for article in articles %} 
+ <div class="card text-center">
+ <div class="card-header">
+ {{article.heading|slice:"128"}} | by {{article.author.first_name}} {{article.author.last_name}} 
+ </div>
+ <div class="card-body">
+ <h5 class="card-title"> {{article.subheading|slice:"255"}} </h5>
+ <p class="card-text">{{article.content|slice:"512"}}</p>
+ <a href="/blog/article/{{article.id}}" class="btn btn-primary">Read more</a>
+ </div>
+ <div class="card-footer text-muted">
+ {{article.timestamp|naturaltime}} 
+ </div>
+ </div>
+
+{% endfor %} 
+
+</div>
+{% endblock %}

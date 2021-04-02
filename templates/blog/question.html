@@ -1,0 +1,98 @@
+{% extends 'blog/base.html' %}
+
+{% block body %}
+{% load humanize %}
+<div class="container" >
+	<h3>{{post.title}} </h3>
+	<b>Posted on </b> {{post.timestamp}} by @{{post.author.username}} <br>
+	<hr>
+	<h4>{{post.subtitle}} </h4>
+	<p>{{post.body}} </p>
+	<hr>
+	
+	<!-- Comment Section -->
+	<span><img alt="?" style="height:30px;border-radius:7px;" src="https://seekicon.com/free-icon-download/comments_5.svg" >
+	<span style="font-size:23px;" >  Comments  <small>({{comments.count}})</small> </span></span> <br>
+	<!-- Commenter Filter -->
+	{% if user.is_authenticated %}
+	
+	
+	{% else %}
+	
+	
+	{% endif %}
+	<br>
+	<!-- Comments -->
+	<form method="post" action="/blog/handlecomment" > {% csrf_token %} 
+		<input type="text" name="comment" clsss="" style="width:80%;outline:none ;border:none;border-bottom:2px solid black" >
+		<input type="hidden" name="postofcomment" value="{{post.id}}" >
+		<button class="btn" type="submit" style="background:none;border:none;outline:none;" >
+		<img alt="?" style="height:30px;border-radius:50%;" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcReOb0miOiJGbR9HylyGRASFTek-9YAPvWewg&usqp=CAU" >
+		</button>
+	</form>
+	
+	<br><br>
+	
+	{% for comment in comments %} 
+	<div class="list-group">
+		<div class="list-group-item list-group-item-action" aria-current="true">
+			<div class="d-flex w-100 justify-content-between">
+				<span class="mb-1"><img alt="" style="height:25px;border-radius:50%;" src="https://image.flaticon.com/icons/png/512/64/64572.png" > {{comment.commentor.first_name}} {{comment.commentor.last_name}} </span>
+				<small>{{comment.timestamp|naturaltime}}</small>
+			</div>
+			<p class="mb-1"><small>{{comment.comment}}</small></p>
+			<p class="text-end">
+			<small>
+			
+			
+			<p class="text-end" >
+			<a class="btn" data-bs-toggle="collapse" href="#collapseExample{{forloop.counter}}" role="button" aria-expanded="false" aria-controls="collapseExample">
+				<img alt="?" style="height:20px;border-radius:50%;" src="https://static.thenounproject.com/png/70802-200.png">
+			</a>
+			<button class="btn" type="button" data-bs-toggle="collapse" data-bs-target="#collapseExample2{{forloop.counter}}" aria-expanded="false" aria-controls="collapseExample">
+				<img alt="?" style="height:20px;border-radius:7px;" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ7y8bMQTs8mTwa2MrfPi5GRhDOxi4QL8T_pA&usqp=CAU">
+				
+			</button>
+			<a href="#" class="btn"><img alt="?" style="height:20px;border-radius:50%;" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR5jfpeRPgi3wIre8XTmKsvOmZhHBKnvb4n3g&usqp=CAU"></a>
+			<a href="#" class="btn"><img alt="?" style="height:20px;border-radius:50%;" src="https://static.thenounproject.com/png/1558765-200.png"></a>
+			
+			</p>
+			<div class="collapse" id="collapseExample{{forloop.counter}}">
+				<div class="card card-body">
+					<form method="post" action="/blog/handlereply" > {% csrf_token %} 
+					<input type="text" name="comment" clsss="" style="width:75%;outline:none ;border:none;border-bottom:1px solid black" >
+					<input type="hidden" name="postofcomment" value="{{post.id}}" >
+					<input type="hidden" name="parentofreply" value="{{comment.id}}" >
+					<button class="btn" type="submit" style="background:none;border:none;outline:none;" >
+					<img alt="?" style="height:30px;border-radius:50%;" src="https://static.thenounproject.com/png/70802-200.png" >
+					</button>
+					</form>
+				</div>
+			</div>
+			
+			<div class="collapse" id="collapseExample2{{forloop.counter}}">
+				<div class="card card-body">
+					{% for reply in replies %}
+						{% if comment.id == reply.assparentcomment.id %}
+							<b>{{reply.commentor.first_name}} {{reply.commentor.last_name}}</b> <small>{{reply.timestamp|naturaltime}}</small>
+							<span>{{reply.comment}}</span> <br>
+						{% endif %} 
+					{% endfor %} 
+				</div>
+			</div>
+			
+			
+			</small></p>
+			
+		</div>
+		
+		<br>
+		
+	</div>
+	
+	{% endfor %} 
+	
+	
+	
+</div>
+{% endblock %} 

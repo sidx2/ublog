@@ -1,0 +1,38 @@
+{% extends 'blog/base.html' %}
+
+{% block title %}
+UBlog - Login or signup
+{% endblock %}
+
+{% block meta %}
+<meta name="description" content="create blogs easily and for free">
+  <meta name="keywords" content="ublog, login, create UBlog account">
+  <meta name="website" content="UBlog">
+{% endblock %}
+
+{% block body %}
+<div class="container" >
+{% if user.is_authenticated %}
+<h3>You are loggedin as <b>{{user.username}}</b></h3>
+<a class="btn btn-primary" href="handleLogout" >Logout</a>
+{% else %} 
+<form class="my-3" method="post" action="loggedin" > {% csrf_token %} 
+  <div class="mb-3">
+    <label for="exampleInputEmail1" class="form-label">Username</label>
+    <input name="username" maxlength="16" type="text" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp">
+    
+  </div>
+  <div class="mb-3">
+    <label for="exampleInputPassword1" class="form-label">Password</label>
+    <input name="password" maxlength="48" type="password" class="form-control" id="exampleInputPassword1">
+  </div>
+  
+  <button type="submit" class="btn btn-primary">Login</button>
+</form>
+{% endif %} 
+<hr>
+<h3>New here? </h3>
+<h4>Create a new account! </h4>
+<a href="signup" style="text-decoration:none; ;border-radius :50%;" ><big> + </big> </a><a class="btn"  href="signup" > <span> Create new account </span></a>
+</div>
+{% endblock %} 
